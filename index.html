@@ -46,27 +46,42 @@
     
     <div class="grid" id="container"></div>
 
-    <script>
-        // 1. AからZまでの文字を用意（これで26個になります）
+<script>
         const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         const container = document.getElementById('container');
+        
+        // 「今再生中かどうか」を覚えるための変数
+        let isPlaying = false;
 
-        // 2. 26個のボタンを順番に作る
         alphabet.forEach(letter => {
             const btn = document.createElement('button');
-            btn.innerText = letter; // ボタンに文字を表示
+            btn.innerText = letter;
 
-            // 3. ボタンを押した時の動き
             btn.onclick = () => {
-                // audioフォルダの中の「A.mp3」などを再生する
+                // もし再生中なら、何もしない（ここで処理を止める）
+                if (isPlaying) return;
+
+                // 再生開始！ロックをかける
+                isPlaying = true;
+                btn.style.opacity = "0.5"; // 押せないことがわかるように少し薄くする
+
                 const audio = new Audio(`audio/${letter}.mp3`);
+                
+                // 再生が終わった時の処理
+                audio.onended = () => {
+                    isPlaying = false; // ロックを解除
+                    btn.style.opacity = "1"; // 明るさを戻す
+                };
+
+                // 再生に失敗した時もロックを解除（ファイルがない場合など）
                 audio.play().catch(e => {
-                    alert("エラー: audioフォルダの中に " + letter + ".mp3 が見つかりません。");
+                    isPlaying = false;
+                    btn.style.opacity = "1";
+                    console.log("再生エラー");
                 });
             };
             container.appendChild(btn);
         });
     </script>
-
 </body>
 </html>
