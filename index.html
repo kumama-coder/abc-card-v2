@@ -50,35 +50,31 @@
         const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         const container = document.getElementById('container');
         
-        // 「今再生中かどうか」を覚えるための変数
-        let isPlaying = false;
+        // 現在再生中の音声を保持するための変数
+        let currentAudio = null;
 
         alphabet.forEach(letter => {
             const btn = document.createElement('button');
             btn.innerText = letter;
 
             btn.onclick = () => {
-                // もし再生中なら、何もしない（ここで処理を止める）
-                if (isPlaying) return;
+                // 1. もし今、何かが再生中だったら強制的に停止する
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0; // 再生位置を最初に戻す
+                }
 
-                // 再生開始！ロックをかける
-                isPlaying = true;
-                btn.style.opacity = "0.5"; // 押せないことがわかるように少し薄くする
-
-                const audio = new Audio(`audio/${letter}.mp3`);
+                // 2. 新しい音声を準備して再生
+                currentAudio = new Audio(`audio/${letter}.mp3`);
                 
-                // 再生が終わった時の処理
-                audio.onended = () => {
-                    isPlaying = false; // ロックを解除
-                    btn.style.opacity = "1"; // 明るさを戻す
-                };
-
-                // 再生に失敗した時もロックを解除（ファイルがない場合など）
-                audio.play().catch(e => {
-                    isPlaying = false;
-                    btn.style.opacity = "1";
-                    console.log("再生エラー");
+                currentAudio.play().catch(e => {
+                    console.log("再生エラー: audioフォルダに " + letter + ".mp3 がありません");
                 });
+
+                // 3. 再生が終わったら変数を空にする（メモリ節約のため）
+                currentAudio.onended = () => {
+                    currentAudio = null;
+                };
             };
             container.appendChild(btn);
         });
