@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DWE ABC Player</title>
+    <style>
+        /* 見た目の設定 */
+        body { font-family: sans-serif; background-color: #f7f9fc; text-align: center; padding: 20px; margin: 0; }
+        h1 { color: #2f3542; margin-bottom: 20px; font-size: 1.2rem; }
+        
+        /* ボタンを並べるグリッド（横に4つずつ） */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+            max-width: 400px; 
+            margin: 0 auto; 
+        }
+
+        /* ボタンのデザイン */
+        button {
+            aspect-ratio: 1 / 1; 
+            background-color: #ffffff; 
+            border: 3px solid #007bff; 
+            border-radius: 15px;
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #007bff; 
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* ボタンを押した時の反応 */
+        button:active { 
+            background-color: #007bff; 
+            color: #ffffff; 
+            transform: translateY(2px); 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ABC Card (A-Z Version)</h1>
+    
+    <div class="grid" id="container"></div>
+
+    <script>
+        // 1. AからZまでの文字を用意（これで26個になります）
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const container = document.getElementById('container');
+
+        // 2. 26個のボタンを順番に作る
+        alphabet.forEach(letter => {
+            const btn = document.createElement('button');
+            btn.innerText = letter; // ボタンに文字を表示
+
+            // 3. ボタンを押した時の動き
+            btn.onclick = () => {
+                // audioフォルダの中の「A.mp3」などを再生する
+                const audio = new Audio(`audio/${letter}.mp3`);
+                audio.play().catch(e => {
+                    alert("エラー: audioフォルダの中に " + letter + ".mp3 が見つかりません。");
+                });
+            };
+            container.appendChild(btn);
+        });
+    </script>
+
+</body>
+</html>
